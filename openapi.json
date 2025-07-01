@@ -1,0 +1,1152 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Mini Etherscan ***DEV***",
+    "summary": "API para consultas de rede ethereum",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/address/{address}": {
+      "get": {
+        "tags": [
+          "Address"
+        ],
+        "summary": "Search for a account address",
+        "operationId": "get_address_address__address__get",
+        "parameters": [
+          {
+            "name": "address",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Address"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/address/{address}/transactions": {
+      "get": {
+        "tags": [
+          "Address"
+        ],
+        "summary": "Fetch account address transactions",
+        "operationId": "get_address_address__address__transactions_get",
+        "parameters": [
+          {
+            "name": "address",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Address"
+            }
+          },
+          {
+            "name": "startblock",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "title": "Startblock"
+            }
+          },
+          {
+            "name": "endblock",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 99999999,
+              "title": "Endblock"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "title": "Per Page"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transactions/{transaction_hash}": {
+      "get": {
+        "tags": [
+          "Transactions"
+        ],
+        "summary": "Search for a transaction by hash.",
+        "operationId": "get_transaction_by_hash_transactions__transaction_hash__get",
+        "parameters": [
+          {
+            "name": "transaction_hash",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Transaction Hash"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transactions/": {
+      "get": {
+        "tags": [
+          "Transactions"
+        ],
+        "summary": "Fetch the latests transactions.",
+        "operationId": "fetch_latest_transactions_transactions__get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TransactionResponse"
+                  },
+                  "title": "Response Fetch Latest Transactions Transactions  Get"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/blocks/": {
+      "get": {
+        "tags": [
+          "Blocks"
+        ],
+        "summary": "Fetch the latests blocks.",
+        "operationId": "fetch_blocks_blocks__get",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 10,
+              "title": "Per Page"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlocksResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/blocks/{number}": {
+      "get": {
+        "tags": [
+          "Blocks"
+        ],
+        "summary": "Search for a block by number.",
+        "operationId": "get_block_by_number_blocks__number__get",
+        "parameters": [
+          {
+            "name": "number",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Block Number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlockItem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/blocks/{number}/sandwich": {
+      "get": {
+        "tags": [
+          "Blocks"
+        ],
+        "summary": "Search for sandwiches attack on the specific block.",
+        "operationId": "fetch_sandwiches_attack_by_block_number_blocks__number__sandwich_get",
+        "parameters": [
+          {
+            "name": "number",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Block Number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SingleSandwichResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/blocks/{number}/multiple_sandwich": {
+      "get": {
+        "tags": [
+          "Blocks"
+        ],
+        "summary": "Search for multi laired sandwiches attack on the specific block.",
+        "operationId": "fetch_detect_multi_layered_burger_sandwiches_by_block_number_blocks__number__multiple_sandwich_get",
+        "parameters": [
+          {
+            "name": "number",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Block Number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleSandwichResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/danger/database": {
+      "delete": {
+        "tags": [
+          "DANGER"
+        ],
+        "summary": "Delete the database and start over",
+        "operationId": "get_address_danger_database_delete",
+        "parameters": [
+          {
+            "name": "password",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Password"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BlockItem": {
+        "properties": {
+          "hash": {
+            "type": "string",
+            "title": "Hash"
+          },
+          "number": {
+            "type": "integer",
+            "title": "Number"
+          },
+          "nonce": {
+            "type": "string",
+            "title": "Nonce"
+          },
+          "miner": {
+            "type": "string",
+            "title": "Miner"
+          },
+          "parent_hash": {
+            "type": "string",
+            "title": "Parent Hash"
+          },
+          "timestamp": {
+            "type": "integer",
+            "title": "Timestamp"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "size": {
+            "type": "integer",
+            "title": "Size"
+          },
+          "gas_used": {
+            "type": "integer",
+            "title": "Gas Used"
+          },
+          "base_fee_per_gas": {
+            "type": "integer",
+            "title": "Base Fee Per Gas"
+          },
+          "gas_limit": {
+            "type": "integer",
+            "title": "Gas Limit"
+          },
+          "difficulty": {
+            "type": "integer",
+            "title": "Difficulty"
+          },
+          "total_difficulty": {
+            "type": "integer",
+            "title": "Total Difficulty"
+          },
+          "withdrawals": {
+            "items": {
+              "$ref": "#/components/schemas/Withdrawal"
+            },
+            "type": "array",
+            "title": "Withdrawals"
+          },
+          "extra_data": {
+            "type": "string",
+            "title": "Extra Data"
+          },
+          "transactions_hashes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Transactions Hashes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "hash",
+          "number",
+          "nonce",
+          "miner",
+          "parent_hash",
+          "timestamp",
+          "status",
+          "size",
+          "gas_used",
+          "base_fee_per_gas",
+          "gas_limit",
+          "difficulty",
+          "total_difficulty",
+          "withdrawals",
+          "extra_data",
+          "transactions_hashes"
+        ],
+        "title": "BlockItem"
+      },
+      "BlocksResponse": {
+        "properties": {
+          "blocks": {
+            "items": {
+              "$ref": "#/components/schemas/BlockItem"
+            },
+            "type": "array",
+            "title": "Blocks"
+          }
+        },
+        "type": "object",
+        "required": [
+          "blocks"
+        ],
+        "title": "BlocksResponse"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "MultipleSandwichResponse": {
+        "properties": {
+          "block_number": {
+            "type": "integer",
+            "title": "Block Number"
+          },
+          "sandwiches": {
+            "items": {
+              "$ref": "#/components/schemas/SandwichAttack"
+            },
+            "type": "array",
+            "title": "Sandwiches"
+          },
+          "total_sandwiches": {
+            "type": "integer",
+            "title": "Total Sandwiches"
+          }
+        },
+        "type": "object",
+        "required": [
+          "block_number",
+          "sandwiches",
+          "total_sandwiches"
+        ],
+        "title": "MultipleSandwichResponse"
+      },
+      "SandwichAttack": {
+        "properties": {
+          "block": {
+            "type": "integer",
+            "title": "Block"
+          },
+          "attacker_addr": {
+            "type": "string",
+            "title": "Attacker Addr"
+          },
+          "victims_addr": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Victims Addr"
+          },
+          "cost_amount": {
+            "type": "number",
+            "title": "Cost Amount"
+          },
+          "gain_amount": {
+            "type": "number",
+            "title": "Gain Amount"
+          },
+          "cost_usd": {
+            "type": "number",
+            "title": "Cost Usd"
+          },
+          "gain_usd": {
+            "type": "number",
+            "title": "Gain Usd"
+          },
+          "swaps": {
+            "$ref": "#/components/schemas/Swaps"
+          }
+        },
+        "type": "object",
+        "required": [
+          "block",
+          "attacker_addr",
+          "victims_addr",
+          "cost_amount",
+          "gain_amount",
+          "cost_usd",
+          "gain_usd",
+          "swaps"
+        ],
+        "title": "SandwichAttack"
+      },
+      "SandwichItem": {
+        "properties": {
+          "attack_group_id": {
+            "type": "integer",
+            "title": "Attack Group Id"
+          },
+          "block_number": {
+            "type": "string",
+            "title": "Block Number"
+          },
+          "ta1": {
+            "type": "string",
+            "title": "Ta1"
+          },
+          "tv": {
+            "type": "string",
+            "title": "Tv"
+          },
+          "ta2": {
+            "type": "string",
+            "title": "Ta2"
+          },
+          "swaps": {
+            "items": {
+              "$ref": "#/components/schemas/Swap"
+            },
+            "type": "array",
+            "title": "Swaps"
+          }
+        },
+        "type": "object",
+        "required": [
+          "attack_group_id",
+          "block_number",
+          "ta1",
+          "tv",
+          "ta2",
+          "swaps"
+        ],
+        "title": "SandwichItem"
+      },
+      "SingleSandwichResponse": {
+        "properties": {
+          "block_number": {
+            "type": "integer",
+            "title": "Block Number"
+          },
+          "sandwiches": {
+            "items": {
+              "$ref": "#/components/schemas/SandwichItem"
+            },
+            "type": "array",
+            "title": "Sandwiches"
+          },
+          "total_sandwiches": {
+            "type": "integer",
+            "title": "Total Sandwiches"
+          }
+        },
+        "type": "object",
+        "required": [
+          "block_number",
+          "sandwiches",
+          "total_sandwiches"
+        ],
+        "title": "SingleSandwichResponse"
+      },
+      "Swap": {
+        "properties": {
+          "hash": {
+            "type": "string",
+            "title": "Hash"
+          },
+          "from_address": {
+            "type": "string",
+            "title": "From Address"
+          },
+          "to_address": {
+            "type": "string",
+            "title": "To Address"
+          },
+          "token_in": {
+            "type": "string",
+            "title": "Token In"
+          },
+          "token_out": {
+            "type": "string",
+            "title": "Token Out"
+          },
+          "amount_in": {
+            "type": "string",
+            "title": "Amount In"
+          },
+          "amount_out": {
+            "type": "string",
+            "title": "Amount Out"
+          },
+          "gas_price": {
+            "type": "string",
+            "title": "Gas Price"
+          },
+          "transition_type": {
+            "type": "string",
+            "enum": [
+              "attacker",
+              "victim"
+            ],
+            "title": "Transition Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "hash",
+          "from_address",
+          "to_address",
+          "token_in",
+          "token_out",
+          "amount_in",
+          "amount_out",
+          "gas_price",
+          "transition_type"
+        ],
+        "title": "Swap"
+      },
+      "SwapDetails": {
+        "properties": {
+          "hash": {
+            "type": "string",
+            "title": "Hash"
+          },
+          "block_number": {
+            "type": "integer",
+            "title": "Block Number"
+          },
+          "log_index": {
+            "type": "integer",
+            "title": "Log Index"
+          },
+          "transaction_index": {
+            "type": "integer",
+            "title": "Transaction Index"
+          },
+          "from": {
+            "type": "string",
+            "title": "From"
+          },
+          "to": {
+            "type": "string",
+            "title": "To"
+          },
+          "token_in": {
+            "type": "string",
+            "title": "Token In"
+          },
+          "token_out": {
+            "type": "string",
+            "title": "Token Out"
+          },
+          "amount_in": {
+            "type": "string",
+            "title": "Amount In"
+          },
+          "amount_out": {
+            "type": "string",
+            "title": "Amount Out"
+          },
+          "gas_price": {
+            "type": "string",
+            "title": "Gas Price"
+          },
+          "dex_name": {
+            "type": "string",
+            "title": "Dex Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "hash",
+          "block_number",
+          "log_index",
+          "transaction_index",
+          "from",
+          "to",
+          "token_in",
+          "token_out",
+          "amount_in",
+          "amount_out",
+          "gas_price",
+          "dex_name"
+        ],
+        "title": "SwapDetails"
+      },
+      "SwapEvent": {
+        "properties": {
+          "to_address": {
+            "type": "string",
+            "title": "To Address"
+          },
+          "amount_out": {
+            "type": "string",
+            "title": "Amount Out"
+          },
+          "gas_fee_wei": {
+            "type": "string",
+            "title": "Gas Fee Wei"
+          },
+          "gas_price": {
+            "type": "string",
+            "title": "Gas Price"
+          },
+          "gas_fee_eth": {
+            "type": "string",
+            "title": "Gas Fee Eth"
+          },
+          "hash": {
+            "type": "string",
+            "title": "Hash"
+          },
+          "from_address": {
+            "type": "string",
+            "title": "From Address"
+          },
+          "gas_burned": {
+            "type": "string",
+            "title": "Gas Burned"
+          },
+          "block_number": {
+            "type": "string",
+            "title": "Block Number"
+          },
+          "token_in": {
+            "type": "string",
+            "title": "Token In"
+          },
+          "gas_tipped": {
+            "type": "string",
+            "title": "Gas Tipped"
+          },
+          "log_index": {
+            "type": "integer",
+            "title": "Log Index"
+          },
+          "token_in_address": {
+            "type": "string",
+            "title": "Token In Address"
+          },
+          "transaction_index": {
+            "type": "integer",
+            "title": "Transaction Index"
+          },
+          "token_out": {
+            "type": "string",
+            "title": "Token Out"
+          },
+          "dex_name": {
+            "type": "string",
+            "title": "Dex Name"
+          },
+          "token_out_address": {
+            "type": "string",
+            "title": "Token Out Address"
+          },
+          "amount_in": {
+            "type": "string",
+            "title": "Amount In"
+          },
+          "gas_used": {
+            "type": "integer",
+            "title": "Gas Used"
+          }
+        },
+        "type": "object",
+        "required": [
+          "to_address",
+          "amount_out",
+          "gas_fee_wei",
+          "gas_price",
+          "gas_fee_eth",
+          "hash",
+          "from_address",
+          "gas_burned",
+          "block_number",
+          "token_in",
+          "gas_tipped",
+          "log_index",
+          "token_in_address",
+          "transaction_index",
+          "token_out",
+          "dex_name",
+          "token_out_address",
+          "amount_in",
+          "gas_used"
+        ],
+        "title": "SwapEvent"
+      },
+      "Swaps": {
+        "properties": {
+          "front_run": {
+            "items": {
+              "$ref": "#/components/schemas/SwapEvent"
+            },
+            "type": "array",
+            "title": "Front Run"
+          },
+          "victims": {
+            "items": {
+              "$ref": "#/components/schemas/SwapEvent"
+            },
+            "type": "array",
+            "title": "Victims"
+          },
+          "back_run": {
+            "items": {
+              "$ref": "#/components/schemas/SwapEvent"
+            },
+            "type": "array",
+            "title": "Back Run"
+          }
+        },
+        "type": "object",
+        "required": [
+          "front_run",
+          "victims",
+          "back_run"
+        ],
+        "title": "Swaps"
+      },
+      "TransactionResponse": {
+        "properties": {
+          "transaction_hash": {
+            "type": "string",
+            "title": "Transaction Hash"
+          },
+          "transaction_index": {
+            "type": "integer",
+            "title": "Transaction Index"
+          },
+          "block_hash": {
+            "type": "string",
+            "title": "Block Hash"
+          },
+          "block_number": {
+            "type": "integer",
+            "title": "Block Number"
+          },
+          "timestamp": {
+            "type": "integer",
+            "title": "Timestamp"
+          },
+          "nonce": {
+            "type": "integer",
+            "title": "Nonce"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "from": {
+            "type": "string",
+            "title": "From"
+          },
+          "to": {
+            "type": "string",
+            "title": "To"
+          },
+          "value": {
+            "type": "integer",
+            "title": "Value"
+          },
+          "transaction_fee": {
+            "type": "integer",
+            "title": "Transaction Fee"
+          },
+          "gas": {
+            "type": "integer",
+            "title": "Gas"
+          },
+          "gas_price": {
+            "type": "integer",
+            "title": "Gas Price"
+          },
+          "input": {
+            "type": "string",
+            "title": "Input"
+          },
+          "v": {
+            "type": "integer",
+            "title": "V"
+          },
+          "swap_details": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SwapDetails"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "transaction_hash",
+          "transaction_index",
+          "block_hash",
+          "block_number",
+          "timestamp",
+          "nonce",
+          "status",
+          "from",
+          "to",
+          "value",
+          "transaction_fee",
+          "gas",
+          "gas_price",
+          "input",
+          "v",
+          "swap_details"
+        ],
+        "title": "TransactionResponse"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "Withdrawal": {
+        "properties": {
+          "address": {
+            "type": "string",
+            "title": "Address"
+          },
+          "amount": {
+            "type": "integer",
+            "title": "Amount"
+          },
+          "index": {
+            "type": "integer",
+            "title": "Index"
+          },
+          "validatorIndex": {
+            "type": "integer",
+            "title": "Validatorindex"
+          }
+        },
+        "type": "object",
+        "required": [
+          "address",
+          "amount",
+          "index",
+          "validatorIndex"
+        ],
+        "title": "Withdrawal"
+      }
+    }
+  }
+}
