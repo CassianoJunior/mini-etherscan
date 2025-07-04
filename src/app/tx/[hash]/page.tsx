@@ -14,8 +14,15 @@ import {
 } from "@/components/ui/card";
 import { useGetTransactionByHashTransactionsTransactionHashGet } from "@/http/transactions/transactions";
 
+// Helper to format USD
+function formatUSD(amount: number | string) {
+	if (amount === undefined || amount === null || Number.isNaN(Number(amount)))
+		return "-";
+	return `$${Number(amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+
 function formatEther(wei: number) {
-	return (wei / 1e18).toFixed(6);
+	return (wei / 1e18).toFixed(18);
 }
 
 function formatGwei(wei: number) {
@@ -37,6 +44,16 @@ export default function TransactionPage({
 		error,
 	} = useGetTransactionByHashTransactionsTransactionHashGet(params.hash);
 
+	// Helper to check if this transaction is a swap (has swap_details)
+	const isSwap =
+		transactionData?.swap_details !== null &&
+		transactionData?.swap_details !== undefined;
+
+	// Helper to check if this transaction is part of a MEV attack (attacker/victim)
+	// For this mock, we assume if swap_details.dex_name exists, it's a DEX swap, but we don't have MEV context here.
+	// In a real app, this would come from block-level MEV analysis.
+	// We'll show a warning if swap_details exists, and display the swap details.
+
 	if (isLoading) {
 		return (
 			<div className="min-h-screen bg-background flex items-center justify-center">
@@ -51,6 +68,7 @@ export default function TransactionPage({
 	if (error || !transactionData) {
 		notFound();
 	}
+
 	return (
 		<div className="min-h-screen bg-background">
 			{/* Header */}
@@ -65,18 +83,6 @@ export default function TransactionPage({
 									className="text-sm font-medium hover:text-blue-600"
 								>
 									Home
-								</Link>
-								<Link
-									href="/blocks"
-									className="text-sm font-medium hover:text-blue-600"
-								>
-									Blocks
-								</Link>
-								<Link
-									href="/transactions"
-									className="text-sm font-medium hover:text-blue-600"
-								>
-									Transactions
 								</Link>
 							</nav>
 						</div>
@@ -134,6 +140,153 @@ export default function TransactionPage({
 					</CardContent>
 				</Card>
 
+				{/* SWAP/MEV Section */}
+				{isSwap && (
+					<Card className="mb-8 border-2 border-yellow-400">
+						<CardHeader>
+							<CardTitle>Swap Operation Detected</CardTitle>
+							<CardDescription>
+								This transaction includes a swap operation
+								{transactionData.swap_details?.dex_name
+									? ` on ${transactionData.swap_details.dex_name}`
+									: ""}
+								.
+							</CardDescription>
+						</CardHeader>
+						<CardContent>
+							<div className="space-y-4">
+								<div className="flex flex-wrap gap-2 items-center">
+									<Badge className="bg-yellow-100 text-yellow-800 border-yellow-300">
+										Swap
+									</Badge>
+									{transactionData.swap_details?.dex_name && (
+										<span className="text-sm text-muted-foreground">
+											DEX: {transactionData.swap_details.dex_name}
+										</span>
+									)}
+								</div>
+								<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+									<div>
+										<div className="text-sm font-medium text-muted-foreground">
+											Token In
+										</div>
+										<div className="font-mono text-sm mt-1">
+											{transactionData.swap_details?.token_in}
+										</div>
+									</div>
+									<div>
+										<div className="text-sm font-medium text-muted-foreground">
+											Token Out
+										</div>
+										<div className="font-mono text-sm mt-1">
+											{transactionData.swap_details?.token_out}
+										</div>
+									</div>
+								</div>
+								<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+									<div>
+										<div className="text-sm font-medium text-muted-foreground">
+											Amount In
+										</div>
+										<div className="font-mono text-sm mt-1">
+											{transactionData.swap_details?.amount_in}
+										</div>
+									</div>
+									<div>
+										<div className="text-sm font-medium text-muted-foreground">
+											Amount Out
+										</div>
+										<div className="font-mono text-sm mt-1">
+											{transactionData.swap_details?.amount_out}
+										</div>
+									</div>
+								</div>
+								<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+									<div>
+										<div className="text-sm font-medium text-muted-foreground">
+											Gas Price
+										</div>
+										<div className="font-mono text-sm mt-1">
+											{transactionData.swap_details?.gas_price}
+										</div>
+									</div>
+									<div>
+										<div className="text-sm font-medium text-muted-foreground">
+											Swap Hash
+										</div>
+										<div className="font-mono text-sm mt-1">
+											{transactionData.swap_details?.hash}
+										</div>
+									</div>
+								</div>
+								{/* MEV Attack Info (mocked, as we don't have block-level context here) */}
+								<div className="mt-4">
+									<Badge className="bg-orange-100 text-orange-800 border-orange-300">
+										Potential MEV Attack
+									</Badge>
+									<div className="text-sm text-orange-700 mt-2">
+										This swap may be part of a MEV attack (e.g., sandwich
+										attack).
+										<br />
+										<span className="font-medium">Note:</span> For full MEV
+										context, see the block page.
+									</div>
+									{/* Value and Cost (mocked, as we don't have cost/gain in transaction) */}
+									<div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+										<div>
+											<div className="text-sm font-medium text-muted-foreground">
+												Swap Value (WEI)
+											</div>
+											<div className="font-mono text-sm mt-1">
+												{transactionData.value} WEI
+											</div>
+										</div>
+										<div>
+											<div className="text-sm font-medium text-muted-foreground">
+												Transaction Fee (ETH)
+											</div>
+											<div className="font-mono text-sm mt-1">
+												{transactionData.transaction_fee
+													? formatEther(transactionData.transaction_fee)
+													: "-"}{" "}
+												ETH
+											</div>
+										</div>
+									</div>
+									<div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
+										<div>
+											<div className="text-sm font-medium text-muted-foreground">
+												Swap Value (USD)
+											</div>
+											<div className="font-mono text-sm mt-1">
+												{transactionData.value
+													? formatUSD(
+															Number(formatEther(transactionData.value)) * 3500,
+														)
+													: "-"}
+											</div>
+										</div>
+										<div>
+											<div className="text-sm font-medium text-muted-foreground">
+												Transaction Fee (USD)
+											</div>
+											<div className="font-mono text-sm mt-1">
+												{transactionData.transaction_fee
+													? formatUSD(
+															Number(
+																formatEther(transactionData.transaction_fee),
+															) * 3500,
+														)
+													: "-"}
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</CardContent>
+					</Card>
+				)}
+
 				{/* Transaction Details */}
 				<Card className="mb-8">
 					<CardHeader>
@@ -144,6 +297,7 @@ export default function TransactionPage({
 					</CardHeader>
 					<CardContent>
 						<div className="space-y-6">
+							{/* ...existing code... */}
 							<div>
 								<div className="text-sm font-medium text-muted-foreground">
 									Transaction Hash
@@ -155,7 +309,7 @@ export default function TransactionPage({
 									</Button>
 								</div>
 							</div>
-
+							{/* ...existing code... */}
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 								<div>
 									<div className="text-sm font-medium text-muted-foreground">
@@ -184,7 +338,7 @@ export default function TransactionPage({
 									</div>
 								</div>
 							</div>
-
+							{/* ...existing code... */}
 							<div>
 								<div className="text-sm font-medium text-muted-foreground">
 									Timestamp
@@ -193,7 +347,7 @@ export default function TransactionPage({
 									{formatTimestamp(transactionData.timestamp)}
 								</div>
 							</div>
-
+							{/* ...existing code... */}
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 								<div>
 									<div className="text-sm font-medium text-muted-foreground">
@@ -218,7 +372,7 @@ export default function TransactionPage({
 									</div>
 								</div>
 							</div>
-
+							{/* ...existing code... */}
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 								<div>
 									<div className="text-sm font-medium text-muted-foreground">
@@ -237,7 +391,7 @@ export default function TransactionPage({
 									</div>
 								</div>
 							</div>
-
+							{/* ...existing code... */}
 							<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 								<div>
 									<div className="text-sm font-medium text-muted-foreground">
@@ -264,7 +418,7 @@ export default function TransactionPage({
 									</div>
 								</div>
 							</div>
-
+							{/* ...existing code... */}
 							<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 								<div>
 									<div className="text-sm font-medium text-muted-foreground">
@@ -287,7 +441,7 @@ export default function TransactionPage({
 									<div className="mt-1">Legacy</div>
 								</div>
 							</div>
-
+							{/* ...existing code... */}
 							<div>
 								<div className="text-sm font-medium text-muted-foreground">
 									Input Data
